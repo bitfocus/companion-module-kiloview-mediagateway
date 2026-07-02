@@ -37,6 +37,14 @@ This module will allow you to control Kiloview Media Gateway devices(MG300V2/RMG
 - **Add Decode Source** — Add a new decode source (RTMP/RTSP/UDP/SRT/HLS/Zixi/RTP). Options: JSON Body (text input)
 - **Remove Decode Source** — Delete a decode source. Options: Source (dropdown)
 
+### Source Group
+- **Add Source Group** — Create a new source group. Options: Group Name (text input)
+- **Remove Source Group** — Delete a source group. Options: Group (dropdown)
+
+### HDMI Output
+- **Enable Output1 HDMI** — Control Output 1 HDMI interface. Options: Video HDMI Device, Video Enable, Audio HDMI Device, Audio Enable, Volume
+- **Enable Output2 HDMI** — Control Output 2 HDMI interface. Options: Video HDMI Device, Video Enable, Audio HDMI Device, Audio Enable, Volume
+
 ### System
 - **Reboot Device** — Reboot the Media Gateway device
 
@@ -77,3 +85,22 @@ This module will allow you to control Kiloview Media Gateway devices(MG300V2/RMG
 - **Add HLS Source** — Pre-configured JSON body for adding an HLS decode source
 - **Add Zixi Source** — Pre-configured JSON body for adding a Zixi decode source
 - **Add RTP Source** — Pre-configured JSON body for adding an RTP decode source
+
+### Source Group
+- **Add Source Group** — Create a new source group
+- **Remove Source Group** — Delete a source group (pick from dropdown)
+
+### Playback
+- **Start Stream Playback** — Start playback (configure output/layout/position/stream in button settings)
+- **Stop Stream Playback** — Stop playback (configure output/layout/position in button settings)
+
+### Gateway Push
+- **Start Gateway Push** — Start pushing a source to a gateway stream
+- **Stop Gateway Push** — Stop an active gateway push
+
+### Multi Output
+- **Multi Out Switch** — Switch multi output mode
+
+### HDMI Output
+- **Enable Output1 HDMI** — Control Output 1 HDMI video/audio/volume
+- **Enable Output2 HDMI** — Control Output 2 HDMI video/audio/volume
