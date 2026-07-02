@@ -207,7 +207,7 @@ class MediaGateway {
 	}
 
 	async getOutputInterfaces(params) {
-		return await this.authPost('/output/interfaces/get', params)
+		return await this.authGet('/output/interfaces/get', params)
 	}
 
 	async setSource(params) {

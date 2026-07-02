@@ -61,6 +61,13 @@ module.exports = {
 		{ id: 'off', label: 'Off' },
 	],
 
+	CHOICES_HDMI_VIDEO: [{ id: 'null', label: '- No HDMI video devices -' }],
+	CHOICES_HDMI_AUDIO: [{ id: 'null', label: '- No HDMI audio devices -' }],
+	CHOICES_HDMI_VIDEO1: [{ id: 'null', label: '- No HDMI video devices -' }],
+	CHOICES_HDMI_AUDIO1: [{ id: 'null', label: '- No HDMI audio devices -' }],
+	CHOICES_HDMI_VIDEO2: [{ id: 'null', label: '- No HDMI video devices -' }],
+	CHOICES_HDMI_AUDIO2: [{ id: 'null', label: '- No HDMI audio devices -' }],
+
 	INTERVAL: null,
 	INTERVAL_SOURCES: null,
 	RECONNECT_INTERVAL: null,

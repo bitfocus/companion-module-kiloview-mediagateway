@@ -398,6 +398,62 @@ module.exports = {
 				self.log('debug', 'Output list fetch failed: ' + e.message)
 			}
 
+			// Get output HDMI interfaces
+			let hdmiVideoArray = [{ id: 'null', label: '- No HDMI video devices -' }]
+			let hdmiAudioArray = [{ id: 'null', label: '- No HDMI audio devices -' }]
+			let hdmiVideo1Array = [{ id: 'null', label: '- No HDMI video devices -' }]
+			let hdmiAudio1Array = [{ id: 'null', label: '- No HDMI audio devices -' }]
+			let hdmiVideo2Array = [{ id: 'null', label: '- No HDMI video devices -' }]
+			let hdmiAudio2Array = [{ id: 'null', label: '- No HDMI audio devices -' }]
+
+			async function fetchHdmiInterfaces(outputId) {
+				try {
+					let videoResult = await self.DEVICE.getOutputInterfaces({ output_id: outputId, type: 'video' })
+					let audioResult = await self.DEVICE.getOutputInterfaces({ output_id: outputId, type: 'audio' })
+					let videos = []
+					let audios = []
+					if (videoResult && videoResult.data) {
+						let data = Array.isArray(videoResult.data) ? videoResult.data : [videoResult.data]
+						data.forEach((iface) => {
+							videos.push({
+								id: String(iface.id || iface.intf_id || ''),
+								label: `${iface.label || 'HDMI'} (Output ${outputId})`,
+								_iface: iface,
+							})
+						})
+					}
+					if (audioResult && audioResult.data) {
+						let data = Array.isArray(audioResult.data) ? audioResult.data : [audioResult.data]
+						data.forEach((iface) => {
+							audios.push({
+								id: String(iface.id || iface.intf_id || ''),
+								label: `${iface.label || 'HDMI Audio'} (Output ${outputId})`,
+								_iface: iface,
+							})
+						})
+					}
+					return { videos, audios }
+				} catch (e) {
+					return { videos: [], audios: [] }
+				}
+			}
+
+			try {
+				let { videos: v1, audios: a1 } = await fetchHdmiInterfaces('1')
+				let { videos: v2, audios: a2 } = await fetchHdmiInterfaces('2')
+
+				let allVideos = [...v1, ...v2]
+				let allAudios = [...a1, ...a2]
+				if (allVideos.length > 0) hdmiVideoArray = allVideos
+				if (allAudios.length > 0) hdmiAudioArray = allAudios
+				if (v1.length > 0) hdmiVideo1Array = v1
+				if (a1.length > 0) hdmiAudio1Array = a1
+				if (v2.length > 0) hdmiVideo2Array = v2
+				if (a2.length > 0) hdmiAudio2Array = a2
+			} catch (e) {
+				self.log('debug', 'HDMI interfaces fetch failed: ' + e.message)
+			}
+
 			self.checkVariables()
 
 			if (JSON.stringify(self.CHOICES_STREAMS) !== JSON.stringify(streamsArray)) {
@@ -439,6 +495,36 @@ module.exports = {
 
 			if (JSON.stringify(self.CHOICES_PREVIEW_SOURCES) !== JSON.stringify(previewSourcesArray)) {
 				self.CHOICES_PREVIEW_SOURCES = previewSourcesArray
+				self.initActions()
+			}
+
+			if (JSON.stringify(self.CHOICES_HDMI_VIDEO) !== JSON.stringify(hdmiVideoArray)) {
+				self.CHOICES_HDMI_VIDEO = hdmiVideoArray
+				self.initActions()
+			}
+
+			if (JSON.stringify(self.CHOICES_HDMI_AUDIO) !== JSON.stringify(hdmiAudioArray)) {
+				self.CHOICES_HDMI_AUDIO = hdmiAudioArray
+				self.initActions()
+			}
+
+			if (JSON.stringify(self.CHOICES_HDMI_VIDEO1) !== JSON.stringify(hdmiVideo1Array)) {
+				self.CHOICES_HDMI_VIDEO1 = hdmiVideo1Array
+				self.initActions()
+			}
+
+			if (JSON.stringify(self.CHOICES_HDMI_AUDIO1) !== JSON.stringify(hdmiAudio1Array)) {
+				self.CHOICES_HDMI_AUDIO1 = hdmiAudio1Array
+				self.initActions()
+			}
+
+			if (JSON.stringify(self.CHOICES_HDMI_VIDEO2) !== JSON.stringify(hdmiVideo2Array)) {
+				self.CHOICES_HDMI_VIDEO2 = hdmiVideo2Array
+				self.initActions()
+			}
+
+			if (JSON.stringify(self.CHOICES_HDMI_AUDIO2) !== JSON.stringify(hdmiAudio2Array)) {
+				self.CHOICES_HDMI_AUDIO2 = hdmiAudio2Array
 				self.initActions()
 			}
 		} catch (error) {

@@ -238,6 +238,99 @@ module.exports = {
 			},
 		}
 
+		function buildHdmiAction(outputId) {
+			let suffix = outputId === 1 ? '1' : '2'
+			let videoChoices = outputId === 1 ? 'CHOICES_HDMI_VIDEO1' : 'CHOICES_HDMI_VIDEO2'
+			let audioChoices = outputId === 1 ? 'CHOICES_HDMI_AUDIO1' : 'CHOICES_HDMI_AUDIO2'
+			return {
+				name: `Enable Output${suffix} HDMI`,
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Video HDMI Device',
+						id: 'video_id',
+						default: self[videoChoices][0]?.id || 'null',
+						choices: self[videoChoices],
+					},
+					{
+						type: 'dropdown',
+						label: 'Video Enable',
+						id: 'video_enable',
+						default: 'true',
+						choices: [
+							{ id: 'true', label: 'On' },
+							{ id: 'false', label: 'Off' },
+						],
+					},
+					{
+						type: 'dropdown',
+						label: 'Audio HDMI Device',
+						id: 'audio_id',
+						default: self[audioChoices][0]?.id || 'null',
+						choices: self[audioChoices],
+					},
+					{
+						type: 'dropdown',
+						label: 'Audio Enable',
+						id: 'audio_enable',
+						default: 'true',
+						choices: [
+							{ id: 'true', label: 'On' },
+							{ id: 'false', label: 'Off' },
+						],
+					},
+					{
+						type: 'number',
+						label: 'Volume (dB, -51 to 20)',
+						id: 'volume',
+						default: -5,
+						min: -51,
+						max: 20,
+					},
+				],
+				callback: async function (action) {
+					let { video_id, video_enable, audio_id, audio_enable, volume } = action.options
+					let output_id = String(outputId)
+
+					if (video_id && video_id !== 'null') {
+						let vIface = self[videoChoices].find((v) => v.id === video_id)
+						let params = Object.assign(
+							{ type: 'video', intf_id: parseInt(video_id) },
+							(vIface && vIface._iface) || {},
+							{
+								output_id: output_id,
+								id: parseInt(video_id),
+								intf_id: parseInt(video_id),
+								enable: video_enable === 'true',
+							}
+						)
+						self.log('debug', 'enableOutputHdmi' + suffix + ' video params: ' + JSON.stringify(params))
+						await self.DEVICE.setOutputInterface(params)
+					}
+
+					if (audio_id && audio_id !== 'null') {
+						let aIface = self[audioChoices].find((a) => a.id === audio_id)
+						let params = Object.assign(
+							{ type: 'audio', intf_id: parseInt(audio_id) },
+							(aIface && aIface._iface) || {},
+							{
+								output_id: output_id,
+								id: parseInt(audio_id),
+								intf_id: parseInt(audio_id),
+								enable: audio_enable === 'true',
+								volume: parseInt(volume),
+							}
+						)
+						self.log('debug', 'enableOutputHdmi' + suffix + ' audio params: ' + JSON.stringify(params))
+						await self.DEVICE.setOutputInterface(params)
+					}
+				},
+			}
+		}
+
+		actions.enableOutputHdmi1 = buildHdmiAction(1)
+		actions.enableOutputHdmi2 = buildHdmiAction(2)
+
 		actions.addPreviewSource = {
 			name: 'Add Preview Source',
 			options: [

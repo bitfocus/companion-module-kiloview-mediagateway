@@ -347,6 +347,136 @@ module.exports = {
 		]
 		presets.push(...presets.sourceGroup)
 
+		// === Playback ===
+		presets.push({
+			category: 'Playback',
+			type: 'button',
+			name: 'Start Stream Playback',
+			style: {
+				text: 'Start\\nPlay',
+				size: '14',
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 128, 0),
+			},
+			steps: [
+				{
+					down: [{ actionId: 'startPlay' }],
+					up: [],
+				},
+			],
+		})
+
+		presets.push({
+			category: 'Playback',
+			type: 'button',
+			name: 'Stop Stream Playback',
+			style: {
+				text: 'Stop\\nPlay',
+				size: '14',
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(255, 0, 0),
+			},
+			steps: [
+				{
+					down: [{ actionId: 'stopPlay' }],
+					up: [],
+				},
+			],
+		})
+
+		// === Gateway Push ===
+		presets.push({
+			category: 'Gateway Push',
+			type: 'button',
+			name: 'Start Gateway Push',
+			style: {
+				text: 'Start\\nPush',
+				size: '14',
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 100, 0),
+			},
+			steps: [
+				{
+					down: [{ actionId: 'startPush' }],
+					up: [],
+				},
+			],
+		})
+
+		presets.push({
+			category: 'Gateway Push',
+			type: 'button',
+			name: 'Stop Gateway Push',
+			style: {
+				text: 'Stop\\nPush',
+				size: '14',
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(139, 0, 0),
+			},
+			steps: [
+				{
+					down: [{ actionId: 'stopPush' }],
+					up: [],
+				},
+			],
+		})
+
+		// === Multi Output ===
+		presets.push({
+			category: 'Multi Output',
+			type: 'button',
+			name: 'Multi Out Switch',
+			style: {
+				text: 'Multi\\nOut\\nSwitch',
+				size: '14',
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 255),
+			},
+			steps: [
+				{
+					down: [{ actionId: 'multiOutSwitch' }],
+					up: [],
+				},
+			],
+		})
+
+		// === HDMI Output ===
+		presets.push({
+			category: 'HDMI Output',
+			type: 'button',
+			name: 'Enable Output1 HDMI',
+			style: {
+				text: 'Output1\\nHDMI\\nChoose',
+				size: '14',
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 255),
+			},
+			steps: [
+				{
+					down: [{ actionId: 'enableOutputHdmi1' }],
+					up: [],
+				},
+			],
+		})
+
+		presets.push({
+			category: 'HDMI Output',
+			type: 'button',
+			name: 'Enable Output2 HDMI',
+			style: {
+				text: 'Output2\\nHDMI\\nChoose',
+				size: '14',
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 255),
+			},
+			steps: [
+				{
+					down: [{ actionId: 'enableOutputHdmi2' }],
+					up: [],
+				},
+			],
+		})
+
 		self.setPresetDefinitions(presets)
 	},
 }
