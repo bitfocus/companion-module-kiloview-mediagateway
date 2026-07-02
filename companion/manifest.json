@@ -1,0 +1,26 @@
+{
+	"id": "kiloview-mediagateway",
+	"name": "Kiloview Media Gateway",
+	"shortname": "Kiloview-MediaGateway",
+	"description": "Module to control Kiloview Media Gateway devices(MG300V2/RMG300V2) with full API integration",
+	"version": "1.0.0",
+	"license": "MIT",
+	"repository": "git+https://github.com/bitfocus/companion-module-kiloview-mediagateway.git",
+	"bugs": "https://github.com/bitfocus/companion-module-kiloview-mediagateway/issues",
+	"maintainers": [
+		{
+			"name": "kiloview102",
+			"email": "102@kiloview.com"
+		},
+	],
+	"legacyIds": [],
+	"runtime": {
+		"type": "node18",
+		"api": "nodejs-ipc",
+		"apiVersion": "0.0.0",
+		"entrypoint": "../index.js"
+	},
+	"manufacturer": "Kiloview",
+	"products": ["MG300V2", "MG300V2-OEM", "RMG300V2", "RMG300V2-OEM"],
+	"keywords": ["Kiloview", "Media Gateway", "Decoder", "Multi-View"]
+}
