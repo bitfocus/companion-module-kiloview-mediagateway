@@ -12,6 +12,7 @@ module.exports = {
 	CHOICES_GATEWAY_STREAMS: [{ id: 'null', label: '- No gateway streams available -' }],
 	CHOICES_GATEWAY_STREAMINGS: [{ id: 'null', label: '- No active push streams -' }],
 	CHOICES_PREVIEW_SOURCES: [{ id: 'null', label: '- No active previews -' }],
+	CHOICES_GROUPS: [{ id: 'null', label: '- No groups available -' }],
 
 	CHOICES_MULTI_OUT: [
 		{ id: 1, label: 'Output 1 (Active)', enable: true },

@@ -308,6 +308,45 @@ module.exports = {
 		presets.push(...presets.decode)
 		presets.push(...presets.selectLayout)
 
+		// === Source Group ===
+		presets.sourceGroup = [
+			{
+				category: 'Source Group',
+				type: 'button',
+				name: 'Add Source Group',
+				style: {
+					text: 'Add\\nSource\\nGroup',
+					size: '14',
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 100, 0),
+				},
+				steps: [
+					{
+						down: [{ actionId: 'addSourceGroup', options: { name: '' } }],
+						up: [],
+					},
+				],
+			},
+			{
+				category: 'Source Group',
+				type: 'button',
+				name: 'Remove Source Group',
+				style: {
+					text: 'Remove\\nSource\\nGroup',
+					size: '14',
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(139, 0, 0),
+				},
+				steps: [
+					{
+						down: [{ actionId: 'removeSourceGroup' }],
+						up: [],
+					},
+				],
+			},
+		]
+		presets.push(...presets.sourceGroup)
+
 		self.setPresetDefinitions(presets)
 	},
 }

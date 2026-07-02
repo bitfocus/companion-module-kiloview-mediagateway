@@ -415,6 +415,49 @@ module.exports = {
 			},
 		}
 
+		actions.addSourceGroup = {
+			name: 'Add Source Group',
+			options: [
+				{
+					type: 'textinput',
+					label: 'Group Name',
+					id: 'name',
+					default: '',
+				},
+			],
+			callback: async function (action) {
+				let name = action.options.name
+				if (!name) {
+					self.log('warn', 'Add Source Group: name is empty')
+					return
+				}
+				await self.DEVICE.addGroup({ name: name })
+				await self.checkSources()
+			},
+		}
+
+		actions.removeSourceGroup = {
+			name: 'Remove Source Group',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Group',
+					id: 'group_id',
+					default: self.CHOICES_GROUPS[0]?.id || 'null',
+					choices: self.CHOICES_GROUPS,
+				},
+			],
+			callback: async function (action) {
+				let groupId = action.options.group_id
+				if (!groupId || groupId === 'null') {
+					self.log('warn', 'Remove Source Group: no group selected')
+					return
+				}
+				await self.DEVICE.removeGroup({ group_id: groupId })
+				await self.checkSources()
+			},
+		}
+
 		self.setActionDefinitions(actions)
 	},
 }

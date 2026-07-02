@@ -191,6 +191,7 @@ module.exports = {
 		let self = this
 
 		let streamsArray = [{ id: 'null', label: '- No streams available -' }]
+		let groupsArray = [{ id: 'null', label: '- No groups available -' }]
 		let layoutsArray = [{ id: 'null', label: '- No layouts available -' }]
 		let positionsArray = [{ id: 1, label: 'Position 1' }]
 		let outputsArray = [{ id: 'null', label: '- No outputs available -' }]
@@ -204,6 +205,7 @@ module.exports = {
 				let count = 0
 				let groupLines = []
 				let streams = []
+				let groups = []
 				if (Array.isArray(groupResult.data)) {
 					self.STATE.groups = groupResult.data
 					groupResult.data.forEach((group) => {
@@ -211,6 +213,7 @@ module.exports = {
 						let streamCount = group.streams ? group.streams.length : 0
 						count += streamCount
 						groupLines.push(`- ${name}(${streamCount})`)
+						groups.push({ id: group.id || '', label: name })
 						if (group.streams && Array.isArray(group.streams)) {
 							group.streams.forEach((stream) => {
 								let sName = stream.name || stream.stream_name || stream.ndi_name || 'Unknown'
@@ -236,6 +239,9 @@ module.exports = {
 
 				if (streams.length > 0) {
 					streamsArray = streams
+				}
+				if (groups.length > 0) {
+					groupsArray = groups
 				}
 			}
 
@@ -353,6 +359,26 @@ module.exports = {
 					if (previewList.length > 0) {
 						previewSourcesArray = previewList
 					}
+
+					// Add preview/output streams to CHOICES_STREAMS for gateway push
+					previewResult.data.position.forEach((p) => {
+						if (p.stream_id && p.stream_id !== '') {
+							let existingId = streamsArray.find((s) => s.id === p.stream_id)
+							if (!existingId) {
+								let outLabel = `Output: ${p.stream_name || p.stream_id}`
+								if (p.stream_type) outLabel += `  ${p.stream_type}`
+								streamsArray.push({
+									id: p.stream_id,
+									label: outLabel,
+									name: p.stream_name || p.stream_id,
+									url: '',
+									type: p.stream_type || 'output',
+									group: 'Output',
+									group_id: '',
+								})
+							}
+						}
+					})
 				}
 			} catch (e) {
 				self.log('debug', 'Preview list fetch failed: ' + e.message)
@@ -383,6 +409,11 @@ module.exports = {
 
 			if (JSON.stringify(self.CHOICES_LAYOUTS) !== JSON.stringify(layoutsArray)) {
 				self.CHOICES_LAYOUTS = layoutsArray
+				self.initActions()
+			}
+
+			if (JSON.stringify(self.CHOICES_GROUPS) !== JSON.stringify(groupsArray)) {
+				self.CHOICES_GROUPS = groupsArray
 				self.initActions()
 			}
 
