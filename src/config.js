@@ -91,19 +91,21 @@ module.exports = {
 				width: 3,
 			},
 			{
-				type: 'textinput',
+				type: 'number',
 				id: 'pollingrate',
 				label: 'Polling Rate for Current State (in ms)',
 				default: self.POLLINGRATE,
 				width: 3,
+				min: 250,
 				isVisible: (configValues) => configValues.polling === true,
 			},
 			{
-				type: 'textinput',
+				type: 'number',
 				id: 'pollingrate_sources',
 				label: 'Polling Rate for Sources (in ms)',
 				default: self.POLLINGRATE_SOURCES,
 				width: 3,
+				min: 250,
 				isVisible: (configValues) => configValues.polling === true,
 			},
 			{
@@ -125,7 +127,8 @@ module.exports = {
 				id: 'verboseInfo',
 				width: 9,
 				label: ' ',
-				value: 'Enabling Verbose Logging will push all incoming and outgoing data to the log, which is helpful for debugging.',
+				value:
+					'Enabling Verbose Logging will push all incoming and outgoing data to the log, which is helpful for debugging.',
 			},
 		]
 	},

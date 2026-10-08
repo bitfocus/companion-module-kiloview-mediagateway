@@ -59,7 +59,7 @@ module.exports = {
 						name: stream?.name || '',
 						url: stream?.url || '',
 					},
-					layout_id
+					layout_id,
 				)
 				await self.DEVICE.setSource(params)
 				await self.DEVICE.startPlay({ stream_id })
@@ -144,12 +144,8 @@ module.exports = {
 					return
 				}
 				self.log('info', 'Select Layout: output_id=' + outputId + ' layout_id=' + layoutId)
-				try {
-					let result = await self.DEVICE.selectLayout({ output_id: outputId, layout_id: parseInt(layoutId) })
-					self.log('info', 'Select Layout result: ' + JSON.stringify(result))
-				} catch (e) {
-					self.log('error', 'Select Layout API error: ' + e.message)
-				}
+				let result = await self.DEVICE.selectLayout({ output_id: outputId, layout_id: parseInt(layoutId) })
+				self.log('info', 'Select Layout result: ' + JSON.stringify(result))
 			},
 		}
 
@@ -302,7 +298,7 @@ module.exports = {
 								id: parseInt(video_id),
 								intf_id: parseInt(video_id),
 								enable: video_enable === 'true',
-							}
+							},
 						)
 						self.log('debug', 'enableOutputHdmi' + suffix + ' video params: ' + JSON.stringify(params))
 						await self.DEVICE.setOutputInterface(params)
@@ -319,7 +315,7 @@ module.exports = {
 								intf_id: parseInt(audio_id),
 								enable: audio_enable === 'true',
 								volume: parseInt(volume),
-							}
+							},
 						)
 						self.log('debug', 'enableOutputHdmi' + suffix + ' audio params: ' + JSON.stringify(params))
 						await self.DEVICE.setOutputInterface(params)

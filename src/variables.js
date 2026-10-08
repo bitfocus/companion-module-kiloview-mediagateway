@@ -5,6 +5,9 @@ module.exports = {
 
 		variables.push({ variableId: 'device_name', name: 'Device Name' })
 		variables.push({ variableId: 'output_name', name: 'Current Output Name' })
+		variables.push({ variableId: 'output_resolution', name: 'Output Resolution' })
+		variables.push({ variableId: 'mute_status', name: 'Audio Mute Status' })
+		variables.push({ variableId: 'layout_name', name: 'Current Layout Name' })
 		variables.push({ variableId: 'ip', name: 'Device IP Address' })
 		variables.push({ variableId: 'firmware_version', name: 'Firmware Version' })
 		variables.push({ variableId: 'software_version', name: 'Software Version' })
@@ -20,8 +23,10 @@ module.exports = {
 		variables.push({ variableId: 'layout_list', name: 'Layouts List' })
 		variables.push({ variableId: 'gateway_stream_list', name: 'Gateway Streams List' })
 
+		variables.push({ variableId: 'cpu_usage', name: 'CPU Usage' })
 		variables.push({ variableId: 'mem_used', name: 'Memory Used' })
 		variables.push({ variableId: 'mem_total', name: 'Memory Total' })
+		variables.push({ variableId: 'uptime', name: 'Uptime' })
 
 		self.setVariableDefinitions(variables)
 	},
@@ -34,6 +39,9 @@ module.exports = {
 
 			variableObj.device_name = self.STATE.device_name || ''
 			variableObj.output_name = self.STATE.output_name || ''
+			variableObj.output_resolution = self.STATE.output_resolution || ''
+			variableObj.mute_status = self.STATE.mute_status || ''
+			variableObj.layout_name = self.STATE.layout_name || ''
 			variableObj.ip = self.STATE.ip || ''
 			variableObj.firmware_version = self.STATE.firmware_version || ''
 			variableObj.software_version = self.STATE.software_version || ''
@@ -42,11 +50,17 @@ module.exports = {
 			variableObj.background_type = self.STATE.background_type || ''
 			variableObj.guide_status = self.STATE.guide_status || ''
 			variableObj.sources_count = self.STATE.sources_count || 0
-		variableObj.layouts_count = self.STATE.layouts_count || 0
-		variableObj.gateway_streams_count = self.STATE.gateway_streams_count || 0
-		variableObj.group_list = self.STATE.group_list || ''
-		variableObj.layout_list = self.STATE.layout_list || ''
-		variableObj.gateway_stream_list = self.STATE.gateway_stream_list || ''
+			variableObj.layouts_count = self.STATE.layouts_count || 0
+			variableObj.gateway_streams_count = self.STATE.gateway_streams_count || 0
+			variableObj.group_list = self.STATE.group_list || ''
+			variableObj.layout_list = self.STATE.layout_list || ''
+			variableObj.gateway_stream_list = self.STATE.gateway_stream_list || ''
+
+			if (self.STATE.cpu_usage !== undefined) {
+				variableObj.cpu_usage = self.STATE.cpu_usage
+			} else {
+				variableObj.cpu_usage = ''
+			}
 
 			if (self.STATE.mem_used !== undefined) {
 				variableObj.mem_used = self.STATE.mem_used + 'KB'
@@ -58,6 +72,12 @@ module.exports = {
 				variableObj.mem_total = self.STATE.mem_total + 'KB'
 			} else {
 				variableObj.mem_total = ''
+			}
+
+			if (self.STATE.uptime !== undefined) {
+				variableObj.uptime = self.STATE.uptime
+			} else {
+				variableObj.uptime = ''
 			}
 
 			self.setVariableValues(variableObj)

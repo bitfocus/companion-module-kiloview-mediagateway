@@ -20,7 +20,7 @@ class MediaGateway {
 		this.owner.log(level, message)
 	}
 
-	constructor(owner, ip, username, password, protocol = 'http', port = 99, timeout = 2000) {
+	constructor(owner, ip, username, password, protocol = 'http', port = 99, timeout = 2000, useAuth = true) {
 		this.owner = owner
 		this.connection_info = {
 			ip,
@@ -29,6 +29,8 @@ class MediaGateway {
 			protocol,
 			port,
 		}
+		this.timeout = timeout
+		this.useAuth = useAuth !== false
 
 		this.baseURL = `${protocol}://${ip}:${port}/api`
 
@@ -44,7 +46,7 @@ class MediaGateway {
 			rejectUnauthorized: false,
 		})
 
-		this.authorized = false
+		this.authorized = !this.useAuth
 	}
 
 	_request(method, path, data, useAuth = true) {
@@ -53,7 +55,7 @@ class MediaGateway {
 			const urlObj = new URL(`${this.baseURL}${path}`)
 			const headers = {
 				'Content-Type': 'application/json',
-				'Connection': 'keep-alive',
+				Connection: 'keep-alive',
 			}
 
 			if (useAuth && this.session.token) {
@@ -70,14 +72,31 @@ class MediaGateway {
 				headers,
 			}
 
+			let settled = false
+			const settle = (fn, value) => {
+				if (!settled) {
+					settled = true
+					fn(value)
+				}
+			}
+
 			const req = (isHttps ? https : http).request(options, (res) => {
 				let body = ''
-				res.on('data', (chunk) => { body += chunk })
+				res.on('data', (chunk) => {
+					body += chunk
+				})
 				res.on('end', () => {
+					if (res.statusCode >= 400) {
+						let error = new Error(`HTTP ${res.statusCode}: ${body || res.statusMessage || ''}`)
+						error.name = 'MediaGatewayError'
+						settle(reject, error)
+						return
+					}
+
 					try {
-						resolve(JSON.parse(body))
+						settle(resolve, JSON.parse(body))
 					} catch (e) {
-						resolve(body)
+						settle(resolve, body)
 					}
 				})
 			})
@@ -85,10 +104,14 @@ class MediaGateway {
 			req.on('error', (err) => {
 				let error = new Error(err.message)
 				error.name = 'MediaGatewayError'
-				reject(error)
+				settle(reject, error)
 			})
 
-			if (data && (method === 'POST')) {
+			req.setTimeout(this.timeout, () => {
+				req.destroy(new Error(`Request timed out after ${this.timeout}ms`))
+			})
+
+			if (data && method === 'POST') {
 				req.write(JSON.stringify(data))
 			}
 
@@ -140,7 +163,7 @@ class MediaGateway {
 	}
 
 	async authGet(url, params = {}) {
-		if (!this.authorized) {
+		if (this.useAuth && !this.authorized) {
 			await this.authorize()
 		}
 
@@ -164,7 +187,7 @@ class MediaGateway {
 	}
 
 	async authPost(url, data = {}) {
-		if (!this.authorized) {
+		if (this.useAuth && !this.authorized) {
 			await this.authorize()
 		}
 
@@ -573,6 +596,17 @@ class MediaGateway {
 
 	async checkSession() {
 		return await this.authGet('/users/session/check')
+	}
+
+	destroy() {
+		if (this.httpAgent) {
+			this.httpAgent.destroy()
+			this.httpAgent = undefined
+		}
+		if (this.httpsAgent) {
+			this.httpsAgent.destroy()
+			this.httpsAgent = undefined
+		}
 	}
 
 	// === Report APIs ===

@@ -5,9 +5,17 @@ module.exports = {
 	async initConnection() {
 		let self = this
 
+		const generation = (self._connectionGeneration || 0) + 1
+		self._connectionGeneration = generation
+
 		clearInterval(self.INTERVAL)
 		clearInterval(self.INTERVAL_SOURCES)
-		clearTimeout(self.RECONNECT_INTERVAL)
+		clearInterval(self.RECONNECT_INTERVAL)
+
+		if (self.DEVICE) {
+			self.DEVICE.destroy()
+			self.DEVICE = undefined
+		}
 
 		if (self.config.host && self.config.host !== '') {
 			self.updateStatus(InstanceStatus.Connecting)
@@ -19,7 +27,9 @@ module.exports = {
 				self.config.username,
 				self.config.password,
 				self.config.protocol,
-				self.config.port
+				self.config.port,
+				self.config.timeout,
+				self.config.useAuth !== false,
 			)
 
 			let authorized = false
@@ -32,6 +42,9 @@ module.exports = {
 					self.log('info', 'Attempting to authorize...')
 					authorized = await self.DEVICE.authorize()
 				} catch (error) {
+					if (generation !== self._connectionGeneration) {
+						return
+					}
 					if (error.name === 'MediaGatewayError') {
 						self.log('error', 'Authorization failed. Check your username and password and try again.')
 						self.updateStatus(InstanceStatus.ConnectionFailure, 'Authorization Failed. See log.')
@@ -44,16 +57,30 @@ module.exports = {
 				}
 			}
 
+			if (generation !== self._connectionGeneration) {
+				return
+			}
+
 			if (authorized === true) {
 				self.updateStatus(InstanceStatus.Ok)
 				self.log('info', 'Connection established successfully')
 
 				await self.checkState()
+				if (generation !== self._connectionGeneration) {
+					return
+				}
+
 				await self.checkSources()
+				if (generation !== self._connectionGeneration) {
+					return
+				}
 
 				if (self.config.polling === true) {
-					const pollRate = self.config.pollingrate || self.POLLINGRATE
-					const pollRateSources = self.config.pollingrate_sources || self.POLLINGRATE_SOURCES
+					const pollRate = Math.max(250, parseInt(self.config.pollingrate, 10) || self.POLLINGRATE)
+					const pollRateSources = Math.max(
+						250,
+						parseInt(self.config.pollingrate_sources, 10) || self.POLLINGRATE_SOURCES,
+					)
 
 					self.log('info', `Starting polling at ${pollRate}ms interval`)
 					self.INTERVAL = setInterval(() => {
@@ -80,115 +107,149 @@ module.exports = {
 	async checkState() {
 		let self = this
 
-		let hasError = false
+		if (self._checkStateInFlight) {
+			return
+		}
+		self._checkStateInFlight = true
 
 		try {
-			let outputResult = await self.DEVICE.getOutput()
-			if (outputResult && outputResult.data) {
-				self.STATE.output_name = outputResult.data.output_name || ''
-				self.STATE.output_resolution = outputResult.data.resolution || ''
-				self.STATE.mute_status = outputResult.data.mute ? '1' : '0'
-				self.STATE.background_type = outputResult.data.background_type || ''
+			let failCount = 0
 
-				if (outputResult.data.layout) {
-					self.STATE.layout_name = outputResult.data.layout.name || ''
+			try {
+				let outputResult = await self.DEVICE.getOutput()
+				if (outputResult && outputResult.data) {
+					self.STATE.output_name = outputResult.data.output_name || ''
+					self.STATE.output_resolution = outputResult.data.resolution || ''
+					self.STATE.mute_status = String(outputResult.data.mute) === '1' || outputResult.data.mute === true ? '1' : '0'
+					self.STATE.background_type = outputResult.data.background_type || ''
+
+					if (outputResult.data.layout) {
+						self.STATE.layout_name = outputResult.data.layout.name || ''
+					}
 				}
+			} catch (e) {
+				self.log('debug', 'getOutput failed: ' + e.message)
+				failCount++
 			}
-		} catch (e) {
-			self.log('debug', 'getOutput failed: ' + e.message)
-			hasError = true
-		}
 
-		try {
-			let infoResult = await self.DEVICE.getDeviceInfo()
-			if (infoResult && infoResult.data) {
-				self.STATE.device_name = infoResult.data.device_name || self.STATE.device_name || ''
-				self.STATE.serial_number = infoResult.data.serial_number || ''
-				self.STATE.hardware_version = infoResult.data.hardware_version || ''
-				self.STATE.firmware_version = infoResult.data.firmware_version || ''
-				self.STATE.software_version = infoResult.data.software_version || ''
-			}
-		} catch (e) {
-			self.log('debug', 'getDeviceInfo failed: ' + e.message)
-			hasError = true
-		}
-
-		try {
-			let deviceResult = await self.DEVICE.getDeviceName()
-			if (deviceResult && deviceResult.data) {
-				self.STATE.device_name = deviceResult.data.name || ''
-			}
-		} catch (e) {
-			self.log('debug', 'getDeviceName failed: ' + e.message)
-			hasError = true
-		}
-
-		try {
-			let ipResult = await self.DEVICE.getIP()
-			if (ipResult && ipResult.data) {
-				self.STATE.ip = ipResult.data.ip || self.config.host
-			}
-		} catch (e) {
-			self.STATE.ip = self.config.host
-		}
-
-		try {
-			let usageResult = await self.DEVICE.getUsage()
-			if (usageResult && usageResult.data) {
-				if (usageResult.data.cpu !== undefined) {
-					self.STATE.cpu_usage = usageResult.data.cpu
+			try {
+				let infoResult = await self.DEVICE.getDeviceInfo()
+				if (infoResult && infoResult.data) {
+					self.STATE.device_name = infoResult.data.device_name || self.STATE.device_name || ''
+					self.STATE.serial_number = infoResult.data.serial_number || ''
+					self.STATE.hardware_version = infoResult.data.hardware_version || ''
+					self.STATE.firmware_version = infoResult.data.firmware_version || ''
+					self.STATE.software_version = infoResult.data.software_version || ''
 				}
-				if (usageResult.data.mem !== undefined) {
-					self.STATE.mem_used = usageResult.data.mem.used || usageResult.data.memory_used
-					self.STATE.mem_total = usageResult.data.mem.total || usageResult.data.memory_total
-				}
-				if (usageResult.data.uptime !== undefined) {
-					self.STATE.uptime = usageResult.data.uptime
-				}
+			} catch (e) {
+				self.log('debug', 'getDeviceInfo failed: ' + e.message)
+				failCount++
 			}
-		} catch (e) {
-			self.log('debug', 'getUsage failed: ' + e.message)
-			hasError = true
-		}
 
-		try {
-			let guideResult = await self.DEVICE.getGuideStatus()
-			if (guideResult && guideResult.data) {
-				self.STATE.guide_status = guideResult.data.status || guideResult.data.enabled ? 'on' : 'off'
-			}
-		} catch (e) {
-			self.log('debug', 'getGuideStatus failed: ' + e.message)
-			hasError = true
-		}
-
-		try {
-			let multiOutResult = await self.DEVICE.getMultiOutState()
-			if (multiOutResult && multiOutResult.data && multiOutResult.data.enable !== undefined) {
-				let newEnable = multiOutResult.data.enable
-				let currentEnable = self.CHOICES_MULTI_OUT.find((c) => c.enable)?.id
-				if (currentEnable !== newEnable) {
-					self.CHOICES_MULTI_OUT = [
-						{ id: 1, label: 'Output 1' + (newEnable === 1 ? ' (Active)' : ''), enable: newEnable === 1 },
-						{ id: 2, label: 'Output 2' + (newEnable === 2 ? ' (Active)' : ''), enable: newEnable === 2 },
-					]
-					self.initActions()
+			try {
+				let deviceResult = await self.DEVICE.getDeviceName()
+				if (deviceResult && deviceResult.data) {
+					self.STATE.device_name = deviceResult.data.name || ''
 				}
+			} catch (e) {
+				self.log('debug', 'getDeviceName failed: ' + e.message)
+				failCount++
 			}
-		} catch (e) {
-			self.log('debug', 'getMultiOutState failed: ' + e.message)
-		}
 
-		self.checkFeedbacks()
-		self.checkVariables()
+			try {
+				let ipResult = await self.DEVICE.getIP()
+				if (ipResult && ipResult.data) {
+					self.STATE.ip = ipResult.data.ip || self.config.host
+				}
+			} catch (e) {
+				self.STATE.ip = self.config.host
+				failCount++
+			}
 
-		if (hasError && !self._endpointWarned) {
-			self._endpointWarned = true
-			self.log('warn', 'Some status endpoints returned errors - connection is OK but data may be incomplete')
+			try {
+				let usageResult = await self.DEVICE.getUsage()
+				if (usageResult && usageResult.data) {
+					if (usageResult.data.cpu !== undefined) {
+						self.STATE.cpu_usage = usageResult.data.cpu
+					}
+					if (usageResult.data.mem !== undefined) {
+						self.STATE.mem_used = usageResult.data.mem.used || usageResult.data.memory_used
+						self.STATE.mem_total = usageResult.data.mem.total || usageResult.data.memory_total
+					}
+					if (usageResult.data.uptime !== undefined) {
+						self.STATE.uptime = usageResult.data.uptime
+					}
+				}
+			} catch (e) {
+				self.log('debug', 'getUsage failed: ' + e.message)
+				failCount++
+			}
+
+			try {
+				let guideResult = await self.DEVICE.getGuideStatus()
+				if (guideResult && guideResult.data) {
+					let guideStatus = guideResult.data.status
+					let guideEnabled = guideResult.data.enabled
+					self.STATE.guide_status = guideStatus === 'on' || guideStatus === true || guideEnabled === true ? 'on' : 'off'
+				}
+			} catch (e) {
+				self.log('debug', 'getGuideStatus failed: ' + e.message)
+				failCount++
+			}
+
+			try {
+				let multiOutResult = await self.DEVICE.getMultiOutState()
+				if (multiOutResult && multiOutResult.data && multiOutResult.data.enable !== undefined) {
+					let newEnable = multiOutResult.data.enable
+					let currentEnable = self.CHOICES_MULTI_OUT.find((c) => c.enable)?.id
+					if (currentEnable !== newEnable) {
+						self.CHOICES_MULTI_OUT = [
+							{ id: 1, label: 'Output 1' + (newEnable === 1 ? ' (Active)' : ''), enable: newEnable === 1 },
+							{ id: 2, label: 'Output 2' + (newEnable === 2 ? ' (Active)' : ''), enable: newEnable === 2 },
+						]
+						self.initActions()
+					}
+				}
+			} catch (e) {
+				self.log('debug', 'getMultiOutState failed: ' + e.message)
+				failCount++
+			}
+
+			// 7 endpoints are polled; if most of them fail, treat the connection as lost.
+			if (failCount >= 4) {
+				self.log('warn', `Connection lost: ${failCount}/7 status endpoints failed. Reconnecting...`)
+				self.updateStatus(InstanceStatus.ConnectionFailure)
+				clearInterval(self.INTERVAL)
+				clearInterval(self.INTERVAL_SOURCES)
+				self.startReconnectInterval()
+				return
+			}
+
+			if (failCount > 0) {
+				if (!self._endpointWarned) {
+					self._endpointWarned = true
+					self.log('warn', 'Some status endpoints returned errors - connection is OK but data may be incomplete')
+				}
+			} else {
+				self._endpointWarned = false
+			}
+
+			self.checkFeedbacks()
+			self.checkVariables()
+		} finally {
+			self._checkStateInFlight = false
 		}
 	},
 
 	async checkSources() {
 		let self = this
+
+		if (self._checkSourcesInFlight) {
+			return
+		}
+		self._checkSourcesInFlight = true
+
+		let changed = false
 
 		let streamsArray = [{ id: 'null', label: '- No streams available -' }]
 		let groupsArray = [{ id: 'null', label: '- No groups available -' }]
@@ -331,31 +392,36 @@ module.exports = {
 			// Get preview list
 			try {
 				let previewResult = await self.DEVICE.getPreviewList()
-				if (previewResult && previewResult.data && previewResult.data.position && Array.isArray(previewResult.data.position)) {
+				if (
+					previewResult &&
+					previewResult.data &&
+					previewResult.data.position &&
+					Array.isArray(previewResult.data.position)
+				) {
 					self.STATE.preview_sources = previewResult.data.position
 					let previewList = previewResult.data.position.map((p) => {
-							let sId = p.stream_id || ''
-							let pId = p.id || ''
-							let stream = streamsArray.find((s) => s.id === sId)
-							let sName = stream ? stream.name : ''
-							let sType = stream ? stream.type : ''
-							let label = sName || sType ? `${sName}  ${sType}` : (p.id ? `Preview ${p.id}` : '(Empty)')
-							return {
-								id: String(pId),
-								label: label,
-								pos_id: pId,
-								stream_id: sId,
-								stream_name: sName,
-								stream_type: sType,
-							}
-						})
-						if (!previewList.some((p) => p.id === '')) {
-							previewList.push({ id: '', label: '(Empty)', pos_id: '', stream_id: '', stream_name: '', stream_type: '' })
+						let sId = p.stream_id || ''
+						let pId = p.id || ''
+						let stream = streamsArray.find((s) => s.id === sId)
+						let sName = stream ? stream.name : ''
+						let sType = stream ? stream.type : ''
+						let label = sName || sType ? `${sName}  ${sType}` : p.id ? `Preview ${p.id}` : '(Empty)'
+						return {
+							id: String(pId),
+							label: label,
+							pos_id: pId,
+							stream_id: sId,
+							stream_name: sName,
+							stream_type: sType,
 						}
-						// First position is the IP Stream Output
-						if (previewList.length > 0 && previewList[0].label !== '(Empty)') {
-							previewList[0].label = `IP Stream Output  ${previewList[0].stream_type || ''}`
-						}
+					})
+					if (!previewList.some((p) => p.id === '')) {
+						previewList.push({ id: '', label: '(Empty)', pos_id: '', stream_id: '', stream_name: '', stream_type: '' })
+					}
+					// First position is the IP Stream Output
+					if (previewList.length > 0 && previewList[0].label !== '(Empty)') {
+						previewList[0].label = `IP Stream Output  ${previewList[0].stream_type || ''}`
+					}
 					if (previewList.length > 0) {
 						previewSourcesArray = previewList
 					}
@@ -457,78 +523,84 @@ module.exports = {
 			self.checkVariables()
 
 			if (JSON.stringify(self.CHOICES_STREAMS) !== JSON.stringify(streamsArray)) {
-				self.log('info', 'Source list changed. Updating choices.')
 				self.CHOICES_STREAMS = streamsArray
 				self.CHOICES_SOURCES = streamsArray.map((s) => ({ id: s.id, url: s.url || '', label: s.label }))
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_LAYOUTS) !== JSON.stringify(layoutsArray)) {
 				self.CHOICES_LAYOUTS = layoutsArray
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_GROUPS) !== JSON.stringify(groupsArray)) {
 				self.CHOICES_GROUPS = groupsArray
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_POSITIONS) !== JSON.stringify(positionsArray)) {
 				self.CHOICES_POSITIONS = positionsArray
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_OUTPUTS) !== JSON.stringify(outputsArray)) {
 				self.CHOICES_OUTPUTS = outputsArray
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_GATEWAY_STREAMS) !== JSON.stringify(gatewayStreamsArray)) {
 				self.CHOICES_GATEWAY_STREAMS = gatewayStreamsArray
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_GATEWAY_STREAMINGS) !== JSON.stringify(gatewayStreamingsArray)) {
 				self.CHOICES_GATEWAY_STREAMINGS = gatewayStreamingsArray
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_PREVIEW_SOURCES) !== JSON.stringify(previewSourcesArray)) {
 				self.CHOICES_PREVIEW_SOURCES = previewSourcesArray
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_HDMI_VIDEO) !== JSON.stringify(hdmiVideoArray)) {
 				self.CHOICES_HDMI_VIDEO = hdmiVideoArray
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_HDMI_AUDIO) !== JSON.stringify(hdmiAudioArray)) {
 				self.CHOICES_HDMI_AUDIO = hdmiAudioArray
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_HDMI_VIDEO1) !== JSON.stringify(hdmiVideo1Array)) {
 				self.CHOICES_HDMI_VIDEO1 = hdmiVideo1Array
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_HDMI_AUDIO1) !== JSON.stringify(hdmiAudio1Array)) {
 				self.CHOICES_HDMI_AUDIO1 = hdmiAudio1Array
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_HDMI_VIDEO2) !== JSON.stringify(hdmiVideo2Array)) {
 				self.CHOICES_HDMI_VIDEO2 = hdmiVideo2Array
-				self.initActions()
+				changed = true
 			}
 
 			if (JSON.stringify(self.CHOICES_HDMI_AUDIO2) !== JSON.stringify(hdmiAudio2Array)) {
 				self.CHOICES_HDMI_AUDIO2 = hdmiAudio2Array
+				changed = true
+			}
+
+			if (changed) {
+				self.log('info', 'Choices changed. Rebuilding actions.')
 				self.initActions()
 			}
 		} catch (error) {
 			self.log('debug', 'Error in checkSources: ' + String(error))
+		} finally {
+			self._checkSourcesInFlight = false
 		}
 	},
 }

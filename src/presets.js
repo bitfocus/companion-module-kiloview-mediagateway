@@ -70,7 +70,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addStreamService', options: { body: '{\n  "address": "rtmp://*.*.*.*/live/syncx_300_3",\n  "conn_intv": 3,\n  "conn_timeout": 15,\n  "is_enable": true,\n  "name": "rtmp1",\n  "old_rtmp": false,\n  "password": "",\n  "protocol": "rtmp",\n  "stream_id": "976ea1a4a8d58e7879c3667139fb91c5",\n  "user": ""\n}' } }],
+						down: [
+							{
+								actionId: 'addStreamService',
+								options: {
+									body: '{\n  "address": "rtmp://*.*.*.*/live/syncx_300_3",\n  "conn_intv": 3,\n  "conn_timeout": 15,\n  "is_enable": true,\n  "name": "rtmp1",\n  "old_rtmp": false,\n  "password": "",\n  "protocol": "rtmp",\n  "stream_id": "976ea1a4a8d58e7879c3667139fb91c5",\n  "user": ""\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],
@@ -87,7 +94,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addStreamService', options: { body: '{\n  "address": "",\n  "advanced": "0",\n  "bandwidth": 25,\n  "connection_mode": "Listener",\n  "encryption": "0",\n  "is_enable": true,\n  "latency": 125,\n  "listener_port": 1027,\n  "name": "12323",\n  "passphrase": "",\n  "payload_size": 1316,\n  "protocol": "srt",\n  "srt_stream_id": "",\n  "stream_id": "976ea1a4a8d58e7879c3667139fb91c5",\n  "ts_null_multiple": 0,\n  "ts_pcr_period": 20,\n  "ts_pmt_start_pid": 480,\n  "ts_pts_pcr_delay": 200,\n  "ts_service_name": "Encoder",\n  "ts_service_provider": "Encoder device",\n  "ts_start_pid": 481,\n  "ts_tables_version": 6,\n  "ts_transport_stream_id": 101\n}' } }],
+						down: [
+							{
+								actionId: 'addStreamService',
+								options: {
+									body: '{\n  "address": "",\n  "advanced": "0",\n  "bandwidth": 25,\n  "connection_mode": "Listener",\n  "encryption": "0",\n  "is_enable": true,\n  "latency": 125,\n  "listener_port": 1027,\n  "name": "12323",\n  "passphrase": "",\n  "payload_size": 1316,\n  "protocol": "srt",\n  "srt_stream_id": "",\n  "stream_id": "976ea1a4a8d58e7879c3667139fb91c5",\n  "ts_null_multiple": 0,\n  "ts_pcr_period": 20,\n  "ts_pmt_start_pid": 480,\n  "ts_pts_pcr_delay": 200,\n  "ts_service_name": "Encoder",\n  "ts_service_provider": "Encoder device",\n  "ts_start_pid": 481,\n  "ts_tables_version": 6,\n  "ts_transport_stream_id": 101\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],
@@ -104,7 +118,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addStreamService', options: { body: '{\n  "auth": false,\n  "http_tunnel_port": 8554,\n  "is_enable": true,\n  "multicast_addr": "224.0.1.0",\n  "multicast_enable": false,\n  "multicast_port_max": 31004,\n  "multicast_port_min": 31000,\n  "multicast_ttl": 127,\n  "name": "rtsp1",\n  "port": 554,\n  "protocol": "rtsp",\n  "pwd": "",\n  "session": "ch01",\n  "stream_id": "976ea1a4a8d58e7879c3667139fb91c5",\n  "user": ""\n}' } }],
+						down: [
+							{
+								actionId: 'addStreamService',
+								options: {
+									body: '{\n  "auth": false,\n  "http_tunnel_port": 8554,\n  "is_enable": true,\n  "multicast_addr": "224.0.1.0",\n  "multicast_enable": false,\n  "multicast_port_max": 31004,\n  "multicast_port_min": 31000,\n  "multicast_ttl": 127,\n  "name": "rtsp1",\n  "port": 554,\n  "protocol": "rtsp",\n  "pwd": "",\n  "session": "ch01",\n  "stream_id": "976ea1a4a8d58e7879c3667139fb91c5",\n  "user": ""\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],
@@ -121,7 +142,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addStreamService', options: { body: '{\n  "is_enable": true,\n  "max_segments": 5,\n  "media_playlist_url": "",\n  "mode": "server",\n  "name": "hls1",\n  "protocol": "hls",\n  "segment_time": 5,\n  "session": "hls1",\n  "stream_id": "976ea1a4a8d58e7879c3667139fb91c5"\n}' } }],
+						down: [
+							{
+								actionId: 'addStreamService',
+								options: {
+									body: '{\n  "is_enable": true,\n  "max_segments": 5,\n  "media_playlist_url": "",\n  "mode": "server",\n  "name": "hls1",\n  "protocol": "hls",\n  "segment_time": 5,\n  "session": "hls1",\n  "stream_id": "976ea1a4a8d58e7879c3667139fb91c5"\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],
@@ -138,7 +166,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addStreamService', options: { body: '{\n  "address": "*.*.*.*",\n  "advanced": "0",\n  "bind_port": 0,\n  "is_enable": true,\n  "name": "ts1",\n  "port": 1,\n  "protocol": "ts",\n  "stream_id": "976ea1a4a8d58e7879c3667139fb91c5",\n  "ts_null_multiple": 0,\n  "ts_pcr_period": 20,\n  "ts_pmt_start_pid": 480,\n  "ts_pts_pcr_delay": 200,\n  "ts_service_name": "Encoder",\n  "ts_service_provider": "Encoder device",\n  "ts_start_pid": 481,\n  "ts_tables_version": 6,\n  "ts_transport_stream_id": 101,\n  "ttl": 127\n}' } }],
+						down: [
+							{
+								actionId: 'addStreamService',
+								options: {
+									body: '{\n  "address": "*.*.*.*",\n  "advanced": "0",\n  "bind_port": 0,\n  "is_enable": true,\n  "name": "ts1",\n  "port": 1,\n  "protocol": "ts",\n  "stream_id": "976ea1a4a8d58e7879c3667139fb91c5",\n  "ts_null_multiple": 0,\n  "ts_pcr_period": 20,\n  "ts_pmt_start_pid": 480,\n  "ts_pts_pcr_delay": 200,\n  "ts_service_name": "Encoder",\n  "ts_service_provider": "Encoder device",\n  "ts_start_pid": 481,\n  "ts_tables_version": 6,\n  "ts_transport_stream_id": 101,\n  "ttl": 127\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],
@@ -155,7 +190,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addStreamService', options: { body: '{\n  "address": "*.*.*.*",\n  "advanced": "0",\n  "is_enable": true,\n  "load_type": "ts",\n  "name": "rtps",\n  "port": 1026,\n  "protocol": "rtp",\n  "stream_id": "976ea1a4a8d58e7879c3667139fb91c5",\n  "ts_null_multiple": 0,\n  "ts_pcr_period": 20,\n  "ts_pmt_start_pid": 480,\n  "ts_pts_pcr_delay": 200,\n  "ts_service_name": "Encoder",\n  "ts_service_provider": "Encoder device",\n  "ts_start_pid": 481,\n  "ts_tables_version": 6,\n  "ts_transport_stream_id": 101,\n  "ttl": 127\n}' } }],
+						down: [
+							{
+								actionId: 'addStreamService',
+								options: {
+									body: '{\n  "address": "*.*.*.*",\n  "advanced": "0",\n  "is_enable": true,\n  "load_type": "ts",\n  "name": "rtps",\n  "port": 1026,\n  "protocol": "rtp",\n  "stream_id": "976ea1a4a8d58e7879c3667139fb91c5",\n  "ts_null_multiple": 0,\n  "ts_pcr_period": 20,\n  "ts_pmt_start_pid": 480,\n  "ts_pts_pcr_delay": 200,\n  "ts_service_name": "Encoder",\n  "ts_service_provider": "Encoder device",\n  "ts_start_pid": 481,\n  "ts_tables_version": 6,\n  "ts_transport_stream_id": 101,\n  "ttl": 127\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],
@@ -197,7 +239,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addDecodeSource', options: { body: '{\n  "audio_sync_compst": 0,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 5000,\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "name": "df",\n  "password": "",\n  "stream_id": "",\n  "type": "rtmp",\n  "url": "rtmp://*.*.*.*/live/69669",\n  "user": ""\n}' } }],
+						down: [
+							{
+								actionId: 'addDecodeSource',
+								options: {
+									body: '{\n  "audio_sync_compst": 0,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 5000,\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "name": "df",\n  "password": "",\n  "stream_id": "",\n  "type": "rtmp",\n  "url": "rtmp://*.*.*.*/live/69669",\n  "user": ""\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],
@@ -214,7 +263,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addDecodeSource', options: { body: '{\n  "audio_sync_compst": 0,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 5000,\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "name": "dfdf",\n  "password": "",\n  "stream_id": "",\n  "trans_mode": "tcp",\n  "type": "rtsp",\n  "url": "rtsp://*.*.*.*/live/h265test",\n  "user": ""\n}' } }],
+						down: [
+							{
+								actionId: 'addDecodeSource',
+								options: {
+									body: '{\n  "audio_sync_compst": 0,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 5000,\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "name": "dfdf",\n  "password": "",\n  "stream_id": "",\n  "trans_mode": "tcp",\n  "type": "rtsp",\n  "url": "rtsp://*.*.*.*/live/h265test",\n  "user": ""\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],
@@ -231,7 +287,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addDecodeSource', options: { body: '{\n  "audio_sync_compst": 0,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 15000,\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "name": "ddd",\n  "stream_id": "",\n  "type": "udp",\n  "url": "udp://*.*.*.*:6555"\n}' } }],
+						down: [
+							{
+								actionId: 'addDecodeSource',
+								options: {
+									body: '{\n  "audio_sync_compst": 0,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 15000,\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "name": "ddd",\n  "stream_id": "",\n  "type": "udp",\n  "url": "udp://*.*.*.*:6555"\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],
@@ -248,7 +311,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addDecodeSource', options: { body: '{\n  "address": "",\n  "audio_sync_compst": 0,\n  "bandwidth": 25,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 15000,\n  "connection_mode": "Listener",\n  "encryption": "none",\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "latency": 125,\n  "listener_port": 1025,\n  "name": "dfdf",\n  "newUrl": "srt://*.*.*.*:9000",\n  "passphrase": "",\n  "payload_size": 1316,\n  "show_advanced": "0",\n  "srt_id": "",\n  "stream_id": "",\n  "type": "srt",\n  "url": "srt://*.*.*.*:9000"\n}' } }],
+						down: [
+							{
+								actionId: 'addDecodeSource',
+								options: {
+									body: '{\n  "address": "",\n  "audio_sync_compst": 0,\n  "bandwidth": 25,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 15000,\n  "connection_mode": "Listener",\n  "encryption": "none",\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "latency": 125,\n  "listener_port": 1025,\n  "name": "dfdf",\n  "newUrl": "srt://*.*.*.*:9000",\n  "passphrase": "",\n  "payload_size": 1316,\n  "show_advanced": "0",\n  "srt_id": "",\n  "stream_id": "",\n  "type": "srt",\n  "url": "srt://*.*.*.*:9000"\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],
@@ -265,7 +335,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addDecodeSource', options: { body: '{\n  "audio_sync_compst": 0,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 5000,\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "name": "dfdf",\n  "stream_id": "",\n  "type": "http",\n  "url": "http://*.*.*.*/hls/main/playlist.m3u8"\n}' } }],
+						down: [
+							{
+								actionId: 'addDecodeSource',
+								options: {
+									body: '{\n  "audio_sync_compst": 0,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 5000,\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "name": "dfdf",\n  "stream_id": "",\n  "type": "http",\n  "url": "http://*.*.*.*/hls/main/playlist.m3u8"\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],
@@ -282,7 +359,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addDecodeSource', options: { body: '{\n  "audio_sync_compst": 0,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 5000,\n  "encryption": "none",\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "name": "sdfsd",\n  "newUrl": "zixi://demo.zixi.com:2077/clocks",\n  "passphrase": "",\n  "password": "",\n  "stream_id": "",\n  "type": "zixi",\n  "url": "zixi://demo.zixi.com:2077/clocks",\n  "user": "",\n  "zixi_back_url": "",\n  "zixi_fec_block_ms": 50,\n  "zixi_fec_overhead": 30,\n  "zixi_max_latency": 500,\n  "zixi_stream_provider_id": "clocks",\n  "zixi_udp_out_port": 2077\n}' } }],
+						down: [
+							{
+								actionId: 'addDecodeSource',
+								options: {
+									body: '{\n  "audio_sync_compst": 0,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 5000,\n  "encryption": "none",\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "name": "sdfsd",\n  "newUrl": "zixi://demo.zixi.com:2077/clocks",\n  "passphrase": "",\n  "password": "",\n  "stream_id": "",\n  "type": "zixi",\n  "url": "zixi://demo.zixi.com:2077/clocks",\n  "user": "",\n  "zixi_back_url": "",\n  "zixi_fec_block_ms": 50,\n  "zixi_fec_overhead": 30,\n  "zixi_max_latency": 500,\n  "zixi_stream_provider_id": "clocks",\n  "zixi_udp_out_port": 2077\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],
@@ -299,7 +383,14 @@ module.exports = {
 				},
 				steps: [
 					{
-						down: [{ actionId: 'addDecodeSource', options: { body: '{\n  "audio_sync_compst": 0,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 15000,\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "name": "dfd",\n  "sdp_content": "",\n  "stream_id": "",\n  "type": "rtp",\n  "url": "rtp://*.*.*.*:1026"\n}' } }],
+						down: [
+							{
+								actionId: 'addDecodeSource',
+								options: {
+									body: '{\n  "audio_sync_compst": 0,\n  "buffer": "live:200:200:500:0:0",\n  "connect_speed": 15000,\n  "group_id": "4e7a1b1fd874b2cb1256bcd6ae320676",\n  "name": "dfd",\n  "sdp_content": "",\n  "stream_id": "",\n  "type": "rtp",\n  "url": "rtp://*.*.*.*:1026"\n}',
+								},
+							},
+						],
 						up: [],
 					},
 				],

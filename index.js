@@ -41,6 +41,10 @@ class kiloviewInstance extends InstanceBase {
 			clearInterval(this.INTERVAL)
 			clearInterval(this.INTERVAL_SOURCES)
 			clearInterval(this.RECONNECT_INTERVAL)
+			if (this.DEVICE) {
+				this.DEVICE.destroy()
+				this.DEVICE = undefined
+			}
 		} catch (error) {
 			this.log('error', 'destroy error:' + error)
 		}
