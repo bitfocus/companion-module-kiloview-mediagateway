@@ -3,7 +3,7 @@
 	"name": "Kiloview Media Gateway",
 	"shortname": "Kiloview-MediaGateway",
 	"description": "Module to control Kiloview Media Gateway devices(MG300V2/RMG300V2) with full API integration",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-kiloview-mediagateway.git",
 	"bugs": "https://github.com/bitfocus/companion-module-kiloview-mediagateway/issues",
